@@ -1,0 +1,1837 @@
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>光影瞬间 | 独立摄影师作品展示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        // 检查用户主题偏好
+        const isDarkMode = localStorage.getItem('theme') === 'dark' || 
+                          (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        
+        // Tailwind 配置 - 调整主题色为饱和度稍高的蓝色
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5A86C8', // 降低饱和度后的蓝色
+                        secondary: '#7CA8E5', // 降低饱和度后的浅蓝色
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    transitionTimingFunction: {
+                        'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            }
+            .backdrop-blur {
+                backdrop-filter: blur(8px);
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .btn-pop {
+                transition: all 0.3s ease-smooth;
+            }
+            .btn-pop:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px -5px rgba(74, 123, 238, 0.3);
+            }
+            .btn-pop:active {
+                transform: translateY(0);
+                box-shadow: 0 5px 10px -5px rgba(74, 123, 238, 0.2);
+            }
+            .nav-icon { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%;
+                width: 28px;
+                height: 28px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background-color: rgba(74, 123, 238, 0.1);
+                margin-right: 6px;
+                transition: all 0.3s ease-smooth;
+                flex-shrink: 0;
+            }
+            .nav-link:hover .nav-icon {
+                background-color: rgba(74, 123, 238, 0.2);
+                transform: scale(1.1);
+            }
+        }
+    </style>
+    <style>
+        /* 基础动画定义 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.6s ease-smooth, transform 0.6s ease-smooth;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .slide-up {
+            animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .pulse-soft {
+            animation: pulseSoft 3s infinite ease-in-out;
+        }
+        
+        @keyframes pulseSoft {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        /* 卡片悬停效果 */
+        .card-hover {
+            transition: all 0.5s ease-smooth;
+        }
+        
+        /* 平滑滚动 */
+        html {
+    transition: color 0.3s ease-smooth, background-color 0.3s ease-smooth, border-color 0.3s ease-smooth;
+            scroll-behavior: smooth;
+        }
+        
+        /* 导航链接动画 */
+        .nav-link {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.3s ease-smooth;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #5A86C8;
+            transition: width 0.4s ease-smooth;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* 模态框动画 */
+        .modal-enter {
+            animation: modalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        @keyframes modalEnter {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* 下拉菜单动画 */
+        .dropdown-enter {
+            animation: dropdownEnter 0.3s ease-smooth forwards;
+            opacity: 0;
+            transform-origin: top right;
+            transform: scale(0.95);
+        }
+        
+        @keyframes dropdownEnter {
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* 主题切换按钮动画 */
+        .theme-toggle {
+            transition: transform 0.4s ease-smooth;
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(90deg);
+        }
+        
+        /* 图片悬停效果 */
+        .img-zoom {
+            transition: transform 0.7s ease-smooth;
+        }
+        
+        .img-container:hover .img-zoom {
+            transform: scale(1.05);
+        }
+        
+        /* 按钮图标的微妙动画 */
+        .icon-btn { border-radius: 50%; padding: 0.5rem; display: inline-flex; align-items: center; justify-content: center;
+            transition: transform 0.3s ease-smooth;
+        }
+        
+        .icon-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* 模态框背景渐变 */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            transition: opacity 0.3s ease-smooth;
+        }
+        
+        .modal-backdrop.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="font-inter min-h-screen flex flex-col transition-colors duration-500 ease-smooth bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full z-50 transition-all duration-500 ease-smooth">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold flex items-center gap-2 transition-transform duration-300 hover:scale-105">
+                <i class="fa fa-camera-retro text-primary"></i>
+                <span>Flash&amp;Light</span>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="nav-link hover:text-primary transition-colors duration-300">
+                    <span class="nav-icon"><i class="fa fa-home"></i></span>首页
+                </a>
+                <a href="#gallery" class="nav-link hover:text-primary transition-colors duration-300">
+                    <span class="nav-icon"><i class="fa fa-th"></i></span>作品集
+                </a>
+                <a href="#about" class="nav-link hover:text-primary transition-colors duration-300">
+                    <span class="nav-icon"><i class="fa fa-user"></i></span>关于站主
+                </a>
+                <a href="#forum" class="nav-link hover:text-primary transition-colors duration-300">
+                    <span class="nav-icon"><i class="fa fa-comments"></i></span>摄影论坛
+                </a>
+            </nav>
+            
+            <div class="flex items-center gap-4">
+                <!-- 主题切换按钮 -->
+                <button id="themeToggle" class="theme-toggle text hover:text-primary transition-colors duration-300 p-2 rounded-full">
+                    <i class="fa fa-moon-o text-xl"></i>
+                </button>
+                
+                <button id="messageBtn" class="relative text hover:text-primary transition-colors duration-300 hidden md:block icon-btn rounded-full p-2">
+                    <i class="fa fa-envelope-o text-xl p-1 rounded-full"></i>
+                    <span id="messageBadge" class="absolute -top-2 -right-2 bg-red-500/80 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center transition-transform hover:scale-110">0</span>
+                </button>
+                
+                <div id="userMenu" class="relative">
+                    <button id="userBtn" class="flex items-center gap-2 text hover:text-primary transition-colors duration-300">
+                        <i class="fa fa-user-o text-xl"></i>
+                        <span id="userName" class="hidden md:inline">登录</span>
+                    </button>
+                    
+                    <!-- 用户下拉菜单 -->
+                    <div id="userDropdown" class="absolute right-0 mt-2 w-48 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-2 hidden z-50 bg-white dark:bg-gray-800">
+                    </div>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <button id="mobileMenuBtn" class="md:hidden text text-xl transition-transform duration-300 hover:scale-110">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobileMenu" class="md:hidden border-t border-gray-200 dark:border-gray-800 hidden transition-all duration-300 ease-smooth transform origin-top">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="#home" class="py-2 hover:text-primary transition-colors duration-300 flex items-center">
+                    <span class="nav-icon mr-2"><i class="fa fa-home"></i></span>首页
+                </a>
+                <a href="#gallery" class="py-2 hover:text-primary transition-colors duration-300 flex items-center">
+                    <span class="nav-icon mr-2"><i class="fa fa-th"></i></span>作品集
+                </a>
+                <a href="#about" class="py-2 hover:text-primary transition-colors duration-300 flex items-center">
+                    <span class="nav-icon mr-2"><i class="fa fa-user"></i></span>关于站主
+                </a>
+                <a href="#forum" class="py-2 hover:text-primary transition-colors duration-300 flex items-center">
+                    <span class="nav-icon mr-2"><i class="fa fa-comments"></i></span>摄影论坛
+                </a>
+                <a href="#messages" class="py-2 hover:text-primary transition-colors duration-300 flex items-center">
+                    <span class="nav-icon mr-2"><i class="fa fa-envelope-o"></i></span>私信
+                    <span id="mobileMessageBadge" class="ml-2 bg-red-500/80 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow pt-16">
+        <!-- 首页/英雄区 -->
+        <section id="home" class="relative h-[90vh] flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <img src="https://picsum.photos/id/1015/1920/1080" alt="风景摄影作品" class="w-full h-full object-cover opacity-70">
+                <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black"></div>
+            </div>
+            
+            <div class="container mx-auto px-4 z-10 text-center slide-up">
+                <h1 class="text-[clamp(2.5rem,6vw,4.5rem)] font-bold text-white mb-4 text-shadow leading-tight">
+                    捕捉生活中的<br class="md:hidden">每一个精彩瞬间
+                </h1>
+                <p class="text-[clamp(1rem,2vw,1.25rem)] text-gray-200 mb-8 max-w-2xl mx-auto text-shadow">用镜头讲述故事，让瞬间成为永恒。现在开始探索Flash&amp;Light。</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#gallery" class="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-full transition-all duration-300 btn-pop">
+                        浏览作品集
+                    </a>
+                    <a href="#forum" class="bg-transparent border-2 border-white hover:border-primary hover:text-primary text-white font-medium py-3 px-8 rounded-full transition-all duration-300 btn-pop">
+                        加入讨论
+                    </a>
+                </div>
+            </div>
+            
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white pulse-soft">
+                <a href="#gallery" aria-label="向下滚动">
+                    <i class="fa fa-chevron-down text-2xl"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- 作品集 -->
+        <section id="gallery" class="py-20">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16 fade-in">
+                    <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">摄影作品集</h2>
+                    <p class="max-w-2xl mx-auto text-gray-600 dark:text-gray-400">探索站主的视觉叙事，每一张照片都讲述着独特的故事</p>
+                </div>
+                
+                <!-- 作品分类 -->
+                <div class="flex flex-wrap justify-center gap-3 mb-12 fade-in">
+                    <button class="gallery-filter active px-5 py-2 rounded-full bg-primary/20 text-primary hover:bg-primary/30 transition-all duration-300 transform hover:scale-105" data-filter="all">全部</button>
+                    <button class="gallery-filter px-5 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-300 transform hover:scale-105" data-filter="nature">自然风光</button>
+                    <button class="gallery-filter px-5 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-300 transform hover:scale-105" data-filter="portrait">人像摄影</button>
+                    <button class="gallery-filter px-5 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-300 transform hover:scale-105" data-filter="street">街头纪实</button>
+                    <button class="gallery-filter px-5 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-300 transform hover:scale-105" data-filter="architecture">建筑摄影</button>
+                </div>
+                
+                <!-- 作品网格 -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 作品项1 -->
+                    <div class="gallery-item nature card-hover group relative overflow-hidden rounded-xl shadow-lg transform transition-all duration-500 hover:-translate-y-3 hover:shadow-xl fade-in">
+                        <div class="img-container overflow-hidden h-80">
+                            <img src="https://picsum.photos/id/10/800/600" alt="山间湖泊风光" class="w-full h-full object-cover img-zoom">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                            <h3 class="text-xl font-bold text-white mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">山间晨雾</h3>
+                            <p class="text-gray-200 text-sm mb-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">清晨的山谷被薄雾笼罩，宛如仙境</p>
+                            <span class="text-xs text-primary bg-white/10 px-3 py-1 rounded-full w-fit transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-125">自然风光</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 作品项2 -->
+                    <div class="gallery-item portrait card-hover group relative overflow-hidden rounded-xl shadow-lg transform transition-all duration-500 hover:-translate-y-3 hover:shadow-xl fade-in" style="transition-delay: 100ms;">
+                        <div class="img-container overflow-hidden h-80">
+                            <img src="https://picsum.photos/id/64/800/600" alt="城市女性人像" class="w-full h-full object-cover img-zoom">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                            <h3 class="text-xl font-bold text-white mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">城市沉思</h3>
+                            <p class="text-gray-200 text-sm mb-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">都市中的片刻宁静，捕捉内心世界</p>
+                            <span class="text-xs text-primary bg-white/10 px-3 py-1 rounded-full w-fit transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-125">人像摄影</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 作品项3 -->
+                    <div class="gallery-item street card-hover group relative overflow-hidden rounded-xl shadow-lg transform transition-all duration-500 hover:-translate-y-3 hover:shadow-xl fade-in" style="transition-delay: 200ms;">
+                        <div class="img-container overflow-hidden h-80">
+                            <img src="https://picsum.photos/id/26/800/600" alt="雨后街头" class="w-full h-full object-cover img-zoom">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                            <h3 class="text-xl font-bold text-white mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">雨后街景</h3>
+                            <p class="text-gray-200 text-sm mb-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">雨水冲刷后的街道，反射着霓虹灯光</p>
+                            <span class="text-xs text-primary bg-white/10 px-3 py-1 rounded-full w-fit transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-125">街头纪实</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 作品项4 -->
+                    <div class="gallery-item architecture card-hover group relative overflow-hidden rounded-xl shadow-lg transform transition-all duration-500 hover:-translate-y-3 hover:shadow-xl fade-in">
+                        <div class="img-container overflow-hidden h-80">
+                            <img src="https://picsum.photos/id/42/800/600" alt="现代建筑" class="w-full h-full object-cover img-zoom">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                            <h3 class="text-xl font-bold text-white mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">几何之美</h3>
+                            <p class="text-gray-200 text-sm mb-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">现代建筑的线条与光影，展现几何艺术</p>
+                            <span class="text-xs text-primary bg-white/10 px-3 py-1 rounded-full w-fit transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-125">建筑摄影</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 作品项5 -->
+                    <div class="gallery-item nature card-hover group relative overflow-hidden rounded-xl shadow-lg transform transition-all duration-500 hover:-translate-y-3 hover:shadow-xl fade-in" style="transition-delay: 100ms;">
+                        <div class="img-container overflow-hidden h-80">
+                            <img src="https://picsum.photos/id/15/800/600" alt="海岸线风光" class="w-full h-full object-cover img-zoom">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                            <h3 class="text-xl font-bold text-white mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">海岸晨曦</h3>
+                            <p class="text-gray-200 text-sm mb-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">日出时分的海岸线，金色阳光洒满海面</p>
+                            <span class="text-xs text-primary bg-white/10 px-3 py-1 rounded-full w-fit transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-125">自然风光</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 作品项6 -->
+                    <div class="gallery-item street card-hover group relative overflow-hidden rounded-xl shadow-lg transform transition-all duration-500 hover:-translate-y-3 hover:shadow-xl fade-in" style="transition-delay: 200ms;">
+                        <div class="img-container overflow-hidden h-80">
+                            <img src="https://picsum.photos/id/36/800/600" alt="市场一角" class="w-full h-full object-cover img-zoom">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                            <h3 class="text-xl font-bold text-white mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">市井百态</h3>
+                            <p class="text-gray-200 text-sm mb-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">传统市场的热闹景象，人间烟火气</p>
+                            <span class="text-xs text-primary bg-white/10 px-3 py-1 rounded-full w-fit transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-125">街头纪实</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-12 fade-in">
+                    <button class="px-6 py-3 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition-all duration-300 btn-pop">
+                        加载更多作品 <i class="fa fa-refresh ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于站主 -->
+        <section id="about" class="py-20 bg-gray-50 dark:bg-gray-800/50">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="lg:w-1/2 fade-in">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/1005/800/1000" alt="摄影师肖像" class="w-full h-auto rounded-2xl shadow-2xl object-cover max-w-md mx-auto transition-transform duration-700 hover:scale-[1.02]">
+                            <div class="absolute -bottom-4 -right-4 bg-primary text-white p-4 rounded-lg shadow-lg hidden md:block">
+                                <p class="text-3xl font-bold">10+</p>
+                                <p class="text-sm">摄影经验</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:w-1/2 fade-in">
+                        <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-6">关于站主</h2>
+                        <p class="mb-6 leading-relaxed text-gray-600 dark:text-gray-400">你好，我是Gary，一名独立摄影师。我热衷于通过镜头捕捉生活中的情感与故事，相信每一张照片背后都有其独特的叙事。</p>
+                        <p class="mb-6 leading-relaxed text-gray-600 dark:text-gray-400">我的摄影风格融合了纪实与艺术，擅长捕捉自然光线与人文瞬间。</p>
+                        
+                        <div class="grid grid-cols-2 gap-6 mb-8">
+                            <div class="p-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 transform hover:scale-105">
+                                <h3 class="text-xl font-semibold text-primary mb-2">10+</h3>
+                                <p class="text-gray-600 dark:text-gray-400">摄影经验</p>
+                            </div>
+                            <div class="p-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 transform hover:scale-105">
+                                <h3 class="text-xl font-semibold text-primary mb-2">10000+</h3>
+                                <p class="text-gray-600 dark:text-gray-400">完成项目</p>
+                            </div>
+                            <div class="p-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 transform hover:scale-105">
+                                <h3 class="text-xl font-semibold text-primary mb-2">15+</h3>
+                                <p class="text-gray-600 dark:text-gray-400">奖项与赛事</p>
+                            </div>
+                            <div class="p-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 transform hover:scale-105">
+                                <h3 class="text-xl font-semibold text-primary mb-2">0</h3>
+                                <p class="text-gray-600 dark:text-gray-400">展览展出</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-4">
+                            <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 transform hover:scale-110">
+                                <i class="fa fa-instagram"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 transform hover:scale-110">
+                                <i class="fa fa-facebook"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 transform hover:scale-110">
+                                <i class="fa fa-twitter"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 transform hover:scale-110">
+                                <i class="fa fa-behance"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 摄影论坛 -->
+        <section id="forum" class="py-20">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12 fade-in">
+                    <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">摄影论坛</h2>
+                    <p class="max-w-2xl mx-auto text-gray-600 dark:text-gray-400">与摄影爱好者交流经验，分享作品，探讨技巧</p>
+                </div>
+                
+                <!-- 发布新帖按钮 -->
+                <div class="text-right mb-8 fade-in">
+                    <button id="newPostBtn" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-full transition-all duration-300 btn-pop flex items-center gap-2 ml-auto">
+                        <i class="fa fa-pencil"></i> 发布新帖
+                    </button>
+                </div>
+                
+                <!-- 论坛帖子列表 -->
+                <div class="rounded-xl shadow-lg overflow-hidden fade-in bg-white dark:bg-gray-800">
+                    <!-- 帖子项1 -->
+                    <div class="border-b border-gray-200 dark:border-gray-700 p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-300 transform hover:translate-x-1 cursor-pointer">
+                        <div class="flex flex-col md:flex-row md:items-start gap-4">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-300 hover:scale-110">
+                                <img src="https://picsum.photos/id/1012/100/100" alt="用户头像" class="w-full h-full object-cover">
+                            </div>
+                            
+                            <div class="flex-grow">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
+                                    <h3 class="text-xl font-semibold mb-2 sm:mb-0">
+                                        <a href="#" class="hover:text-primary transition-colors duration-300">新手求教：如何设置曝光参数？</a>
+                                    </h3>
+                                    <span class="text-xs text-gray-500">2小时前</span>
+                                </div>
+                                
+                                <p class="mb-4 line-clamp-2 text-gray-600 dark:text-gray-400">刚入手一台单反相机，对于曝光三要素还不太理解，尤其是在不同光线条件下如何调整参数，希望各位大神指点...</p>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-6">
+                                        <span class="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                                            <i class="fa fa-user-o"></i> 摄影新手
+                                        </span>
+                                        <span class="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                                            <i class="fa fa-folder-o"></i> 技术讨论
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-4">
+                                        <span class="flex items-center gap-1 hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">
+                                            <i class="fa fa-eye"></i> 128
+                                        </span>
+                                        <span class="flex items-center gap-1 hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">
+                                            <i class="fa fa-comment-o"></i> 24
+                                        </span>
+                                        <button class="hover:text-primary transition-colors duration-300 transform hover:scale-110">
+                                            <i class="fa fa-heart-o"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 帖子项2 -->
+                    <div class="border-b border-gray-200 dark:border-gray-700 p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-300 transform hover:translate-x-1 cursor-pointer">
+                        <div class="flex flex-col md:flex-row md:items-start gap-4">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-300 hover:scale-110">
+                                <img src="https://picsum.photos/id/1027/100/100" alt="用户头像" class="w-full h-full object-cover">
+                            </div>
+                            
+                            <div class="flex-grow">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
+                                    <h3 class="text-xl font-semibold mb-2 sm:mb-0">
+                                        <a href="#" class="hover:text-primary transition-colors duration-300">分享我的最新风光作品，求点评</a>
+                                    </h3>
+                                    <span class="text-xs text-gray-500">昨天 15:30</span>
+                                </div>
+                                
+                                <p class="mb-4 line-clamp-2 text-gray-600 dark:text-gray-400">上周去了黄山拍摄，运气不错遇到了云海，使用了ND滤镜进行长曝光，想请大家点评一下构图和后期处理...</p>
+                                
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <img src="https://picsum.photos/id/110/100/100" alt="帖子图片" class="w-16 h-16 object-cover rounded transition-transform duration-300 hover:scale-110">
+                                    <img src="https://picsum.photos/id/119/100/100" alt="帖子图片" class="w-16 h-16 object-cover rounded transition-transform duration-300 hover:scale-110">
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-6">
+                                        <span class="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                                            <i class="fa fa-user-o"></i> 山风摄影
+                                        </span>
+                                        <span class="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                                            <i class="fa fa-folder-o"></i> 作品分享
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-4">
+                                        <span class="flex items-center gap-1 hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">
+                                            <i class="fa fa-eye"></i> 356
+                                        </span>
+                                        <span class="flex items-center gap-1 hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">
+                                            <i class="fa fa-comment-o"></i> 47
+                                        </span>
+                                        <button class="hover:text-primary transition-colors duration-300 transform hover:scale-110">
+                                            <i class="fa fa-heart-o"></i> 89
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 帖子项3 -->
+                    <div class="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-300 transform hover:translate-x-1 cursor-pointer">
+                        <div class="flex flex-col md:flex-row md:items-start gap-4">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-300 hover:scale-110">
+                                <img src="https://picsum.photos/id/1074/100/100" alt="用户头像" class="w-full h-full object-cover">
+                            </div>
+                            
+                            <div class="flex-grow">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
+                                    <h3 class="text-xl font-semibold mb-2 sm:mb-0">
+                                        <a href="#" class="hover:text-primary transition-colors duration-300">推荐几款适合旅行的轻便镜头</a>
+                                    </h3>
+                                    <span class="text-xs text-gray-500">3天前</span>
+                                </div>
+                                
+                                <p class="mb-4 line-clamp-2 text-gray-600 dark:text-gray-400">经常出去旅行，携带太重的器材很不方便，想问问大家有什么轻便且成像素质不错的镜头推荐，主要拍风景和人文...</p>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-6">
+                                        <span class="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                                            <i class="fa fa-user-o"></i> 旅途光影
+                                        </span>
+                                        <span class="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                                            <i class="fa fa-folder-o"></i> 器材讨论
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-4">
+                                        <span class="flex items-center gap-1 hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">
+                                            <i class="fa fa-eye"></i> 782
+                                        </span>
+                                        <span class="flex items-center gap-1 hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">
+                                            <i class="fa fa-comment-o"></i> 63
+                                        </span>
+                                        <button class="hover:text-primary transition-colors duration-300 transform hover:scale-110">
+                                            <i class="fa fa-heart-o"></i> 124
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 分页 -->
+                <div class="flex justify-center mt-10 fade-in">
+                    <nav class="inline-flex rounded-md shadow">
+                        <a href="#" class="px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-l-md transition-all duration-300 transform hover:scale-105">
+                            <i class="fa fa-chevron-left"></i>
+                        </a>
+                        <a href="#" class="px-4 py-2 bg-primary text-white transition-all duration-300 transform hover:scale-105">1</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 transform hover:scale-105">2</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 transform hover:scale-105">3</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 transform hover:scale-105">...</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 transform hover:scale-105">12</a>
+                        <a href="#" class="px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-r-md transition-all duration-300 transform hover:scale-105">
+                            <i class="fa fa-chevron-right"></i>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="py-12 bg-gray-100 dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="fade-in">
+                    <h3 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fa fa-camera-retro text-primary"></i> 光影瞬间
+                    </h3>
+                    <p class="mb-4 text-gray-600 dark:text-gray-400">用镜头捕捉生活中的每一个精彩瞬间，让美好永恒。</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="hover:text-primary transition-colors duration-300 transform hover:scale-110">
+                            <i class="fa fa-instagram"></i>
+                        </a>
+                        <a href="#" class="hover:text-primary transition-colors duration-300 transform hover:scale-110">
+                            <i class="fa fa-facebook"></i>
+                        </a>
+                        <a href="#" class="hover:text-primary transition-colors duration-300 transform hover:scale-110">
+                            <i class="fa fa-twitter"></i>
+                        </a>
+                        <a href="#" class="hover:text-primary transition-colors duration-300 transform hover:scale-110">
+                            <i class="fa fa-behance"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="fade-in" style="transition-delay: 100ms;">
+                    <h4 class="font-semibold mb-4">快速链接</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">首页</a></li>
+                        <li><a href="#gallery" class="hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">作品集</a></li>
+                        <li><a href="#about" class="hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">关于站主</a></li>
+                        <li><a href="#forum" class="hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">摄影论坛</a></li>
+                    </ul>
+                </div>
+                
+                <div class="fade-in" style="transition-delay: 200ms;">
+                    <h4 class="font-semibold mb-4">摄影服务</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">人像摄影</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">风景摄影</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">商业摄影</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors duration-300 text-gray-600 dark:text-gray-400">活动摄影</a></li>
+                    </ul>
+                </div>
+                
+                <div class="fade-in" style="transition-delay: 300ms;">
+                    <h4 class="font-semibold mb-4">联系我</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-start gap-3">
+                            <i class="fa fa-envelope-o mt-1"></i>
+                            <span class="text-gray-600 dark:text-gray-400">contact Garyinchinailikeenglish@outlook.com</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa fa-phone mt-1"></i>
+                            <span class="text-gray-600 dark:text-gray-400">+86 15151591818</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa fa-map-marker mt-1"></i>
+                            <span class="text-gray-600 dark:text-gray-400">江苏·苏州·张家港·沙洲中学</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 dark:border-gray-700 mt-10 pt-6 text-center fade-in">
+                <p class="text-gray-600 dark:text-gray-400">© 2023 光影瞬间 版权所有 | 独立摄影师作品展示网站</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 模态框 - 登录 -->
+    <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-backdrop">
+        <div class="rounded-2xl w-full max-w-md p-8 shadow-2xl relative modal-enter bg-white dark:bg-gray-800">
+            <button id="closeLoginModal" class="absolute top-4 right-4 hover:text-primary transition-colors duration-300 transform hover:scale-110">
+                <i class="fa fa-times text-xl"></i>
+            </button>
+            
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold mb-2">登录账号</h3>
+                <p class="text-gray-600 dark:text-gray-400">欢迎回来，请登录您的账号</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label for="loginAccount" class="block mb-2 text-gray-600 dark:text-gray-400">手机号/邮箱</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa fa-envelope-o"></i>
+                        </span>
+                        <input type="text" id="loginAccount" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-10 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请输入手机号或邮箱">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="loginPassword" class="block mb-2 text-gray-600 dark:text-gray-400">密码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                        <input type="password" id="loginPassword" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-10 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请输入密码">
+                        <button type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 hover:text-primary transition-colors duration-300">
+                            <i class="fa fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" class="rounded border-gray-300 dark:border-gray-700 text-primary focus:ring-primary transition-all duration-300">
+                        <span class="text-gray-600 dark:text-gray-400">记住我</span>
+                    </label>
+                    <a href="#" class="text-primary hover:underline text-sm transition-colors duration-300">忘记密码？</a>
+                </div>
+                
+                <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 btn-pop">
+                    登录
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-gray-600 dark:text-gray-400">还没有账号？ <a href="#" id="showRegisterModal" class="text-primary hover:underline transition-colors duration-300">立即注册</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 - 注册 -->
+    <div id="registerModal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-backdrop">
+        <div class="rounded-2xl w-full max-w-md p-8 shadow-2xl relative modal-enter bg-white dark:bg-gray-800">
+            <button id="closeRegisterModal" class="absolute top-4 right-4 hover:text-primary transition-colors duration-300 transform hover:scale-110">
+                <i class="fa fa-times text-xl"></i>
+            </button>
+            
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold mb-2">创建账号</h3>
+                <p class="text-gray-600 dark:text-gray-400">加入我们的摄影社区，分享你的作品</p>
+            </div>
+            
+            <form id="registerForm" class="space-y-4">
+                <div>
+                    <label for="registerName" class="block mb-2 text-gray-600 dark:text-gray-400">昵称</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa fa-user-o"></i>
+                        </span>
+                        <input type="text" id="registerName" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-10 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请输入昵称">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="registerRealName" class="block mb-2 text-gray-600 dark:text-gray-400">真实姓名</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa fa-id-card"></i>
+                        </span>
+                        <input type="text" id="registerRealName" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-10 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请输入真实姓名">
+                    </div>
+                </div>
+                <div>
+                    <label for="registerPhone" class="block mb-2 text-gray-600 dark:text-gray-400">手机号码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa fa-phone"></i>
+                        </span>
+                        <input type="tel" id="registerPhone" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-10 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请输入手机号码">
+                    </div>
+                </div>
+                <div>
+                    <label for="registerEmail" class="block mb-2 text-gray-600 dark:text-gray-400">邮箱（选填）</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa fa-envelope-o"></i>
+                        </span>
+                        <input type="email" id="registerEmail" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-10 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请输入邮箱（选填）">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="registerPassword" class="block mb-2 text-gray-600 dark:text-gray-400">密码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                        <input type="password" id="registerPassword" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-10 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请输入密码（至少6位）">
+                        <button type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 hover:text-primary transition-colors duration-300">
+                            <i class="fa fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="registerConfirmPassword" class="block mb-2 text-gray-600 dark:text-gray-400">确认密码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                        <input type="password" id="registerConfirmPassword" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-10 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请再次输入密码">
+                    </div>
+                </div>
+                
+                <label class="flex items-start gap-2 text-sm">
+                    <input type="checkbox" class="rounded border-gray-300 dark:border-gray-700 text-primary focus:ring-primary mt-1 transition-all duration-300">
+                    <span class="text-gray-600 dark:text-gray-400">我已阅读并同意<a href="#" class="text-primary hover:underline transition-colors duration-300">用户协议</a>和<a href="#" class="text-primary hover:underline transition-colors duration-300">隐私政策</a></span>
+                </label>
+                
+                <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 btn-pop">
+                    注册
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-gray-600 dark:text-gray-400">已有账号？ <a href="#" id="showLoginModal" class="text-primary hover:underline transition-colors duration-300">立即登录</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 - 发布新帖 -->
+    <div id="newPostModal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-backdrop">
+        <div class="rounded-2xl w-full max-w-2xl p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto modal-enter bg-white dark:bg-gray-800">
+            <button id="closeNewPostModal" class="absolute top-4 right-4 hover:text-primary transition-colors duration-300 transform hover:scale-110">
+                <i class="fa fa-times text-xl"></i>
+            </button>
+            
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold mb-2">发布新帖</h3>
+                <p class="text-gray-600 dark:text-gray-400">在摄影论坛分享你的想法和作品</p>
+            </div>
+            
+            <form id="newPostForm" class="space-y-6">
+                <div>
+                    <label for="postTitle" class="block mb-2 text-gray-600 dark:text-gray-400">标题</label>
+                    <input type="text" id="postTitle" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请输入帖子标题">
+                </div>
+                
+                <div>
+                    <label for="postCategory" class="block mb-2 text-gray-600 dark:text-gray-400">分类</label>
+                    <select id="postCategory" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300">
+                        <option value="">请选择分类</option>
+                        <option value="tech">技术讨论</option>
+                        <option value="works">作品分享</option>
+                        <option value="equipment">器材讨论</option>
+                        <option value="experience">经验交流</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="postContent" class="block mb-2 text-gray-600 dark:text-gray-400">内容</label>
+                    <textarea id="postContent" rows="8" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请输入帖子内容..."></textarea>
+                </div>
+                
+                <div>
+                    <label class="block mb-2 text-gray-600 dark:text-gray-400">上传图片（可选）</label>
+                    <div class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center hover:border-primary transition-all duration-300 cursor-pointer">
+                        <input type="file" id="postImages" multiple="" accept="image/*" class="hidden">
+                        <label for="postImages" class="cursor-pointer">
+                            <div class="mb-2">
+                                <i class="fa fa-cloud-upload text-3xl"></i>
+                            </div>
+                            <p>点击或拖拽图片到此处上传</p>
+                            <p class="text-sm mt-1 text-gray-600 dark:text-gray-400">支持 JPG、PNG 格式，最多5张</p>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end gap-4">
+                    <button type="button" id="cancelPostBtn" class="px-6 py-3 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-300 btn-pop">
+                        取消
+                    </button>
+                    <button type="submit" class="px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all duration-300 btn-pop">
+                        发布帖子
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 模态框 - 个人资料 -->
+    <div id="profileModal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-backdrop">
+        <div class="rounded-2xl w-full max-w-2xl p-8 shadow-2xl relative modal-enter bg-white dark:bg-gray-800">
+            <button id="closeProfileModal" class="absolute top-4 right-4 hover:text-primary transition-colors duration-300 transform hover:scale-110">
+                <i class="fa fa-times text-xl"></i>
+            </button>
+            
+            <div class="text-center mb-8">
+                <div class="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-primary transition-transform duration-500 hover:scale-105">
+                    <img src="https://picsum.photos/id/1012/200/200" alt="用户头像" class="w-full h-full object-cover">
+                </div>
+                <h3 class="text-2xl font-bold mb-1">摄影新手</h3>
+                <p class="text-gray-600 dark:text-gray-400">注册于 2023-05-15</p>
+                
+                <div class="flex justify-center gap-6 mt-4">
+                    <div class="text-center transform transition-all duration-300 hover:scale-110">
+                        <p class="text-2xl font-bold">24</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">发布帖子</p>
+                    </div>
+                    <div class="text-center transform transition-all duration-300 hover:scale-110">
+                        <p class="text-2xl font-bold">128</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">获得点赞</p>
+                    </div>
+                    <div class="text-center transform transition-all duration-300 hover:scale-110">
+                        <p class="text-2xl font-bold">36</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">关注者</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mb-6">
+                <h4 class="font-semibold mb-3">个人简介</h4>
+                <p class="text-gray-600 dark:text-gray-400">热爱摄影的初学者，主要拍摄自然风光和城市建筑，希望能和各位大神交流学习，不断提升自己的摄影水平。</p>
+            </div>
+            
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mb-6">
+                <h4 class="font-semibold mb-3">联系方式</h4>
+                <ul class="space-y-2">
+                    <li class="flex items-start gap-3">
+                        <i class="fa fa-envelope-o mt-1"></i>
+                        <span class="text-gray-600 dark:text-gray-400">novice@example.com</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa fa-instagram text-primary mt-1"></i>
+                        <span class="text-gray-600 dark:text-gray-400">@photography_novice</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="flex justify-center">
+                <button id="editProfileBtn" class="px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all duration-300 btn-pop">
+                    <i class="fa fa-pencil mr-2"></i> 编辑个人资料
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 - 编辑个人资料 -->
+    <div id="editProfileModal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-backdrop">
+        <div class="rounded-2xl w-full max-w-2xl p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto modal-enter bg-white dark:bg-gray-800">
+            <button id="closeEditProfileModal" class="absolute top-4 right-4 hover:text-primary transition-colors duration-300 transform hover:scale-110">
+                <i class="fa fa-times text-xl"></i>
+            </button>
+            
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold mb-2">编辑个人资料</h3>
+                <p class="text-gray-600 dark:text-gray-400">更新你的个人信息和偏好</p>
+            </div>
+            
+            <form id="editProfileForm" class="space-y-6">
+                <div class="text-center">
+                    <div class="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-primary transition-transform duration-500 hover:scale-105">
+                        <img id="profilePreview" src="https://picsum.photos/id/1012/200/200" alt="用户头像" class="w-full h-full object-cover">
+                    </div>
+                    <input type="file" id="profileImage" accept="image/*" class="hidden">
+                    <label for="profileImage" class="cursor-pointer inline-block px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-300 btn-pop text-sm">
+                        <i class="fa fa-upload mr-1"></i> 更换头像
+                    </label>
+                </div>
+                
+                <div>
+                    <label for="editName" class="block mb-2 text-gray-600 dark:text-gray-400">用户名</label>
+                    <input type="text" id="editName" value="摄影新手" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300">
+                </div>
+                
+                <div>
+                    <label for="editEmail" class="block mb-2 text-gray-600 dark:text-gray-400">邮箱</label>
+                    <input type="email" id="editEmail" value="novice@example.com" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300">
+                </div>
+                
+                <div>
+                    <label for="editBio" class="block mb-2 text-gray-600 dark:text-gray-400">个人简介</label>
+                    <textarea id="editBio" rows="4" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300">热爱摄影的初学者，主要拍摄自然风光和城市建筑，希望能和各位大神交流学习，不断提升自己的摄影水平。</textarea>
+                </div>
+                
+                <div>
+                    <label for="editInstagram" class="block mb-2 text-gray-600 dark:text-gray-400">Instagram</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa fa-instagram"></i>
+                        </span>
+                        <input type="text" id="editInstagram" value="@photography_novice" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-10 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300">
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <h4 class="font-semibold mb-4">修改密码（可选）</h4>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="currentPassword" class="block mb-2 text-gray-600 dark:text-gray-400">当前密码</label>
+                            <input type="password" id="currentPassword" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请输入当前密码">
+                        </div>
+                        
+                        <div>
+                            <label for="newPassword" class="block mb-2 text-gray-600 dark:text-gray-400">新密码</label>
+                            <input type="password" id="newPassword" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请输入新密码（至少6位）">
+                        </div>
+                        
+                        <div>
+                            <label for="confirmNewPassword" class="block mb-2 text-gray-600 dark:text-gray-400">确认新密码</label>
+                            <input type="password" id="confirmNewPassword" class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300" placeholder="请再次输入新密码">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end gap-4">
+                    <button type="button" id="cancelEditProfileBtn" class="px-6 py-3 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-300 btn-pop">
+                        取消
+                    </button>
+                    <button type="submit" class="px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all duration-300 btn-pop">
+                        保存修改
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 模态框 - 私信系统 -->
+    <div id="messagesModal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-backdrop">
+        <div class="rounded-2xl w-full max-w-4xl shadow-2xl relative max-h-[90vh] overflow-hidden flex flex-col md:flex-row modal-enter bg-white dark:bg-gray-800">
+            <button id="closeMessagesModal" class="absolute top-4 right-4 hover:text-primary transition-colors duration-300 transform hover:scale-110 z-10 md:hidden">
+                <i class="fa fa-times text-xl"></i>
+            </button>
+            
+            <!-- 私信列表 -->
+            <div class="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 flex flex-col h-[300px] md:h-auto">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-xl font-bold">私信</h3>
+                </div>
+                
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fa fa-search"></i>
+                        </span>
+                        <input type="text" placeholder="搜索对话..." class="w-full border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300">
+                    </div>
+                </div>
+                
+                <div class="flex-grow overflow-y-auto scrollbar-hide">
+                    <!-- 对话项 - 活跃 -->
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-primary/10 hover:bg-primary/20 transition-all duration-300 cursor-pointer flex gap-3 transform hover:translate-x-1">
+                        <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                            <img src="https://picsum.photos/id/1027/100/100" alt="用户头像" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <div class="flex justify-between items-start mb-1">
+                                <h4 class="font-medium truncate">山风摄影</h4>
+                                <span class="text-xs text-gray-500">10:24</span>
+                            </div>
+                            <p class="text-sm truncate text-gray-600 dark:text-gray-400">我觉得你的作品非常有创意，尤其是...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 对话项 -->
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-300 cursor-pointer flex gap-3 transform hover:translate-x-1">
+                        <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                            <img src="https://picsum.photos/id/1074/100/100" alt="用户头像" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <div class="flex justify-between items-start mb-1">
+                                <h4 class="font-medium truncate">旅途光影</h4>
+                                <span class="text-xs text-gray-500">昨天</span>
+                            </div>
+                            <p class="text-sm truncate text-gray-600 dark:text-gray-400">关于你推荐的镜头，我还有一些问题...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 对话项 - 有未读消息 -->
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-300 cursor-pointer flex gap-3 transform hover:translate-x-1">
+                        <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 relative">
+                            <img src="https://picsum.photos/id/1062/100/100" alt="用户头像" class="w-full h-full object-cover">
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 dark:border-gray-900 transform transition-all duration-300 hover:scale-125"></span>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <div class="flex justify-between items-start mb-1">
+                                <h4 class="font-medium truncate">城市快门</h4>
+                                <span class="text-xs text-gray-500">3天前</span>
+                            </div>
+                            <p class="text-sm truncate text-gray-600 dark:text-gray-400">我们可以约个时间一起出去拍街拍吗？</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 对话内容 -->
+            <div class="w-full md:w-2/3 flex flex-col h-[calc(100%-300px)] md:h-full">
+                <!-- 对话头部 -->
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-300 hover:scale-110">
+                        <img src="https://picsum.photos/id/1027/100/100" alt="用户头像" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h4 class="font-medium">山风摄影</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">在线</p>
+                    </div>
+                    <button class="ml-auto hover:text-primary transition-colors duration-300 transform hover:scale-110 hidden md:block">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- 消息内容 -->
+                <div class="flex-grow p-4 overflow-y-auto scrollbar-hide space-y-6">
+                    <!-- 对方消息 -->
+                    <div class="flex gap-3 items-start">
+                        <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                            <img src="https://picsum.photos/id/1027/100/100" alt="用户头像" class="w-full h-full object-cover">
+                        </div>
+                        <div class="max-w-[80%]">
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg rounded-tl-none p-3 transform transition-all duration-300 hover:translate-x-1">
+                                <p class="text-gray-800 dark:text-gray-200">你好！我看了你在论坛上分享的风光作品，非常喜欢你的拍摄风格。</p>
+                            </div>
+                            <p class="text-xs mt-1 text-gray-500">09:42</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 我的消息 -->
+                    <div class="flex gap-3 items-start justify-end">
+                        <div class="max-w-[80%]">
+                            <div class="bg-primary rounded-lg rounded-tr-none p-3 transform transition-all duration-300 hover:-translate-x-1">
+                                <p class="text-white">谢谢！你的黄山云海作品也很棒，特别是长曝光的处理非常专业。</p>
+                            </div>
+                            <p class="text-xs mt-1 text-right text-gray-500">09:45</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                            <img src="https://picsum.photos/id/1012/100/100" alt="我的头像" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    
+                    <!-- 对方消息 -->
+                    <div class="flex gap-3 items-start">
+                        <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                            <img src="https://picsum.photos/id/1027/100/100" alt="用户头像" class="w-full h-full object-cover">
+                        </div>
+                        <div class="max-w-[80%]">
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg rounded-tl-none p-3 transform transition-all duration-300 hover:translate-x-1">
+                                <p class="text-gray-800 dark:text-gray-200">我觉得你的作品非常有创意，尤其是对光线的运用。想请教一下，你通常使用什么设备拍摄？</p>
+                            </div>
+                            <p class="text-xs mt-1 text-gray-500">10:24</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 消息输入框 -->
+                <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                    <form id="messageForm" class="flex gap-2">
+                        <input type="text" placeholder="输入消息..." class="flex-grow border border-gray-300 dark:border-gray-700 dark:bg-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300">
+                        <button type="submit" class="w-10 h-10 rounded-full bg-primary hover:bg-primary/90 flex items-center justify-center text-white transition-all duration-300 transform hover:scale-110">
+                            <i class="fa fa-paper-plane-o"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化主题
+            initTheme();
+            
+            // 主题切换按钮
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('py-2', 'shadow-lg', 'backdrop-blur');
+                    navbar.classList.remove('py-4');
+                } else {
+                    navbar.classList.add('py-4');
+                    navbar.classList.remove('py-2', 'shadow-lg', 'backdrop-blur');
+                }
+            });
+            
+            // 初始化导航栏样式
+            updateNavbarTheme();
+            
+            // 移动端菜单切换
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                if (mobileMenu.classList.contains('hidden')) {
+                    // 打开菜单
+                    mobileMenu.classList.remove('hidden');
+                    mobileMenuBtn.innerHTML = '<i class="fa fa-times"></i>';
+                    // 添加展开动画
+                    setTimeout(() => {
+                        mobileMenu.style.transform = 'scaleY(1)';
+                        mobileMenu.style.opacity = '1';
+                    }, 10);
+                } else {
+                    // 关闭菜单
+                    mobileMenu.style.transform = 'scaleY(0)';
+                    mobileMenu.style.opacity = '0';
+                    // 完全隐藏菜单
+                    setTimeout(() => {
+                        mobileMenu.classList.add('hidden');
+                        mobileMenuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+                    }, 300);
+                }
+            });
+            
+            // 用户下拉菜单
+            const userBtn = document.getElementById('userBtn');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            // 生成下拉菜单内容
+            userDropdown.innerHTML = `
+                <a href="#profile" class="block px-4 py-2 text-sm hover:bg-primary/20 hover:text-primary transition-colors duration-300">
+                    <i class="fa fa-user mr-2"></i>个人资料
+                </a>
+                <a href="#edit-profile" class="block px-4 py-2 text-sm hover:bg-primary/20 hover:text-primary transition-colors duration-300">
+                    <i class="fa fa-pencil mr-2"></i>编辑资料
+                </a>
+                <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                <a href="#" id="logoutBtn" class="block px-4 py-2 text-sm hover:bg-primary/20 hover:text-primary transition-colors duration-300">
+                    <i class="fa fa-sign-out mr-2"></i>退出登录
+                </a>
+            `;
+            
+            userBtn.addEventListener('click', function() {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (isLoggedIn) {
+                    if (userDropdown.classList.contains('hidden')) {
+                        userDropdown.classList.remove('hidden');
+                        // 添加动画类
+                        userDropdown.classList.add('dropdown-enter');
+                        // 动画结束后移除类
+                        setTimeout(() => {
+                            userDropdown.classList.remove('dropdown-enter');
+                        }, 300);
+                    } else {
+                        userDropdown.classList.add('hidden');
+                    }
+                }
+            });
+            
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function(event) {
+                if (!userBtn.contains(event.target) && !userDropdown.contains(event.target)) {
+                    userDropdown.classList.add('hidden');
+                }
+            });
+            
+            // 画廊筛选功能
+            const galleryFilters = document.querySelectorAll('.gallery-filter');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            
+            galleryFilters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    // 移除所有筛选按钮的活跃状态
+                    galleryFilters.forEach(btn => {
+                        btn.classList.remove('active', 'bg-primary/20', 'text-primary');
+                    });
+                    
+                    // 添加当前筛选按钮的活跃状态
+                    this.classList.add('active', 'bg-primary/20', 'text-primary');
+                    
+                    const filterValue = this.getAttribute('data-filter');
+                    
+                    // 筛选作品并添加过渡动画
+                    galleryItems.forEach(item => {
+                        item.style.transition = 'all 0.4s ease-smooth';
+                        if (filterValue === 'all' || item.classList.contains(filterValue)) {
+                            item.style.opacity = '0';
+                            item.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                item.style.display = 'block';
+                                setTimeout(() => {
+                                    item.style.opacity = '1';
+                                    item.style.transform = 'scale(1)';
+                                }, 50);
+                            }, 200);
+                        } else {
+                            item.style.opacity = '0';
+                            item.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                item.style.display = 'none';
+                            }, 300);
+                        }
+                    });
+                });
+            });
+            
+            // 模态框控制
+            const loginModal = document.getElementById('loginModal');
+            const registerModal = document.getElementById('registerModal');
+            const newPostModal = document.getElementById('newPostModal');
+            const profileModal = document.getElementById('profileModal');
+            const editProfileModal = document.getElementById('editProfileModal');
+            const messagesModal = document.getElementById('messagesModal');
+            
+            // 打开登录模态框
+            userBtn.addEventListener('click', function() {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (!isLoggedIn) {
+                    loginModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        loginModal.classList.add('visible');
+                    }, 10);
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+            
+            // 关闭登录模态框
+            document.getElementById('closeLoginModal').addEventListener('click', function() {
+                closeModal(loginModal);
+            });
+            
+            // 打开注册模态框
+            document.getElementById('showRegisterModal').addEventListener('click', function(e) {
+                e.preventDefault();
+                loginModal.classList.remove('visible');
+                setTimeout(() => {
+                    loginModal.classList.add('hidden');
+                    registerModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        registerModal.classList.add('visible');
+                    }, 10);
+                }, 300);
+            });
+            
+            // 关闭注册模态框
+            document.getElementById('closeRegisterModal').addEventListener('click', function() {
+                closeModal(registerModal);
+            });
+            
+            // 打开登录模态框（从注册页面）
+            document.getElementById('showLoginModal').addEventListener('click', function(e) {
+                e.preventDefault();
+                registerModal.classList.remove('visible');
+                setTimeout(() => {
+                    registerModal.classList.add('hidden');
+                    loginModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        loginModal.classList.add('visible');
+                    }, 10);
+                }, 300);
+            });
+            
+            // 打开发布新帖模态框
+            document.getElementById('newPostBtn').addEventListener('click', function() {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (isLoggedIn) {
+                    newPostModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        newPostModal.classList.add('visible');
+                    }, 10);
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    loginModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        loginModal.classList.add('visible');
+                    }, 10);
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+            
+            // 关闭发布新帖模态框
+            document.getElementById('closeNewPostModal').addEventListener('click', function() {
+                closeModal(newPostModal);
+            });
+            
+            document.getElementById('cancelPostBtn').addEventListener('click', function() {
+                closeModal(newPostModal);
+            });
+            
+            // 打开个人资料模态框
+            document.querySelectorAll('a[href="#profile"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    userDropdown.classList.add('hidden');
+                    profileModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        profileModal.classList.add('visible');
+                    }, 10);
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+            
+            // 关闭个人资料模态框
+            document.getElementById('closeProfileModal').addEventListener('click', function() {
+                closeModal(profileModal);
+            });
+            
+            // 打开编辑个人资料模态框
+            document.getElementById('editProfileBtn').addEventListener('click', function() {
+                profileModal.classList.remove('visible');
+                setTimeout(() => {
+                    profileModal.classList.add('hidden');
+                    editProfileModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        editProfileModal.classList.add('visible');
+                    }, 10);
+                }, 300);
+            });
+            
+            // 关闭编辑个人资料模态框
+            document.getElementById('closeEditProfileModal').addEventListener('click', function() {
+                closeModal(editProfileModal);
+            });
+            
+            document.getElementById('cancelEditProfileBtn').addEventListener('click', function() {
+                editProfileModal.classList.remove('visible');
+                setTimeout(() => {
+                    editProfileModal.classList.add('hidden');
+                    profileModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        profileModal.classList.add('visible');
+                    }, 10);
+                }, 300);
+            });
+            
+            // 打开私信模态框
+            document.getElementById('messageBtn').addEventListener('click', function() {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (isLoggedIn) {
+                    messagesModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        messagesModal.classList.add('visible');
+                    }, 10);
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    loginModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        loginModal.classList.add('visible');
+                    }, 10);
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+            
+            document.querySelectorAll('a[href="#messages"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+                    
+                    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                    if (isLoggedIn) {
+                        messagesModal.classList.remove('hidden');
+                        setTimeout(() => {
+                            messagesModal.classList.add('visible');
+                        }, 10);
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        loginModal.classList.remove('hidden');
+                        setTimeout(() => {
+                            loginModal.classList.add('visible');
+                        }, 10);
+                        document.body.style.overflow = 'hidden';
+                    }
+                });
+            });
+            
+            // 关闭私信模态框
+            document.getElementById('closeMessagesModal').addEventListener('click', function() {
+                closeModal(messagesModal);
+            });
+            
+            // 关闭模态框（点击背景）
+            [loginModal, registerModal, newPostModal, profileModal, editProfileModal, messagesModal].forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal(this);
+                    }
+                });
+            });
+            
+            // 注册表单提交
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 获取表单数据
+                const name = document.getElementById('registerName').value;
+                const realName = document.getElementById('registerRealName').value;
+                const phone = document.getElementById('registerPhone').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                
+                // 简单验证
+                if (!name || !realName || !phone || !password || !confirmPassword) {
+                    alert('请填写所有必填字段');
+                    return;
+                }
+
+                // 验证手机号码格式
+                const phoneRegex = /^1[3-9]\d{9}$/;
+                if (!phoneRegex.test(phone)) {
+                    alert('请输入有效的手机号码');
+                    return;
+                }
+
+                // 检查手机号注册数量限制
+                let phoneRegistry = JSON.parse(localStorage.getItem('phoneRegistry')) || {};
+                if (phoneRegistry[phone] && phoneRegistry[phone] >= 2) {
+                    alert('该手机号码已注册两个账号，无法继续注册');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    alert('两次密码输入不一致');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    alert('密码长度至少为6位');
+                    return;
+                }
+                
+                // 模拟注册成功
+                alert('注册成功！请登录');
+                
+                // 更新手机号注册计数
+                phoneRegistry[phone] = (phoneRegistry[phone] || 0) + 1;
+                localStorage.setItem('phoneRegistry', JSON.stringify(phoneRegistry));
+
+                // 保存用户信息到用户数组
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                users.push({
+                    name: name,
+                    realName: realName,
+                    phone: phone,
+                    email: email,
+                    password: password,
+                    avatar: `https://picsum.photos/id/${Math.floor(Math.random() * 100)}/100/100`
+                });
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                // 关闭注册模态框，打开登录模态框
+                registerModal.classList.remove('visible');
+                setTimeout(() => {
+                    registerModal.classList.add('hidden');
+                    loginModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        loginModal.classList.add('visible');
+                    }, 10);
+                }, 300);
+                
+                // 重置表单
+                this.reset();
+            });
+            
+            // 登录表单提交
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 获取表单数据
+                const account = document.getElementById('loginAccount').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                // 简单验证
+                if (!account || !password) {
+                    alert('请填写账号和密码');
+                    return;
+                }
+                
+                // 验证用户
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const user = users.find(u => (u.phone === account || u.email === account) && u.password === password);
+                
+                if (!user) {
+                    alert('账号或密码错误');
+                    return;
+                }
+                
+                // 登录成功
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('currentUser', JSON.stringify(user));
+
+                // 更新用户显示
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userBtn').innerHTML = `<img src="${user.avatar || 'https://picsum.photos/id/1012/100/100'}" alt="用户头像" class="w-8 h-8 rounded-full transition-transform duration-300 hover:scale-110"> <span id="userName" class="hidden md:inline">${user.name}</span>`;
+                
+                // 关闭登录模态框
+                closeModal(loginModal);
+                
+                // 重置表单
+                this.reset();
+            });
+            
+            // 退出登录
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 清除登录状态
+                localStorage.setItem('isLoggedIn', 'false');
+                
+                // 更新用户显示
+                document.getElementById('userBtn').innerHTML = '<i class="fa fa-user-o text-xl"></i> <span id="userName" class="hidden md:inline">登录</span>';
+                
+                // 关闭下拉菜单
+                userDropdown.classList.add('hidden');
+            });
+            
+            // 发布新帖表单提交
+            document.getElementById('newPostForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 获取表单数据
+                const title = document.getElementById('postTitle').value;
+                const category = document.getElementById('postCategory').value;
+                const content = document.getElementById('postContent').value;
+                
+                // 简单验证
+                if (!title || !category || !content) {
+                    alert('请填写标题、选择分类并输入内容');
+                    return;
+                }
+                
+                // 模拟发布成功
+                alert('帖子发布成功！');
+                
+                // 关闭模态框
+                closeModal(newPostModal);
+                
+                // 重置表单
+                this.reset();
+            });
+            
+            // 编辑个人资料表单提交
+            document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 获取表单数据
+                const name = document.getElementById('editName').value;
+                const email = document.getElementById('editEmail').value;
+                const bio = document.getElementById('editBio').value;
+                const instagram = document.getElementById('editInstagram').value;
+                
+                // 简单验证
+                if (!name || !email) {
+                    alert('请填写用户名和邮箱');
+                    return;
+                }
+                
+                // 模拟保存成功
+                alert('个人资料更新成功！');
+                
+                // 更新本地存储的用户信息
+                const user = JSON.parse(localStorage.getItem('user')) || {};
+                user.name = name;
+                user.email = email;
+                user.bio = bio;
+                user.instagram = instagram;
+                localStorage.setItem('user', JSON.stringify(user));
+                
+                // 更新用户显示
+                document.getElementById('userName').textContent = name;
+                
+                // 关闭编辑模态框，打开个人资料模态框
+                editProfileModal.classList.remove('visible');
+                setTimeout(() => {
+                    editProfileModal.classList.add('hidden');
+                    profileModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        profileModal.classList.add('visible');
+                    }, 10);
+                }, 300);
+            });
+            
+            // 消息表单提交
+            document.getElementById('messageForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 获取消息内容
+                const messageInput = this.querySelector('input');
+                const message = messageInput.value.trim();
+                
+                if (!message) return;
+                
+                // 模拟发送消息
+                const messagesContainer = document.querySelector('#messagesModal .overflow-y-auto');
+                
+                // 创建新消息元素
+                const newMessage = document.createElement('div');
+                newMessage.className = 'flex gap-3 items-start justify-end opacity-0 transform translate-x-4';
+                newMessage.innerHTML = `
+                    <div class="max-w-[80%]">
+                        <div class="bg-primary rounded-lg rounded-tr-none p-3">
+                            <p class="text-white">${message}</p>
+                        </div>
+                        <p class="text-xs mt-1 text-right">${new Date().getHours()}:${String(new Date().getMinutes()).padStart(2, '0')}</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                        <img src="https://picsum.photos/id/1012/100/100" alt="我的头像" class="w-full h-full object-cover">
+                    </div>
+                `;
+                
+                // 添加到消息容器
+                messagesContainer.appendChild(newMessage);
+                
+                // 触发动画
+                setTimeout(() => {
+                    newMessage.style.transition = 'all 0.4s ease-smooth';
+                    newMessage.style.opacity = '1';
+                    newMessage.style.transform = 'translateX(0)';
+                }, 50);
+                
+                // 滚动到底部
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                // 清空输入框
+                messageInput.value = '';
+            });
+            
+            // 检查登录状态
+            const checkLoginStatus = () => {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (isLoggedIn) {
+                    const user = JSON.parse(localStorage.getItem('user')) || { name: '摄影爱好者' };
+                    document.getElementById('userName').textContent = user.name;
+                    document.getElementById('userBtn').innerHTML = `<img src="${user.avatar || 'https://picsum.photos/id/1012/100/100'}" alt="用户头像" class="w-8 h-8 rounded-full transition-transform duration-300 hover:scale-110"> <span id="userName" class="hidden md:inline">${user.name}</span>`;
+                }
+            };
+            
+            // 初始化检查登录状态
+            checkLoginStatus();
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    // 关闭移动菜单（如果打开）
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.style.transform = 'scaleY(0)';
+                        mobileMenu.style.opacity = '0';
+                        setTimeout(() => {
+                            mobileMenu.classList.add('hidden');
+                            mobileMenuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+                        }, 300);
+                    }
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // 为页面元素添加滚动动画
+            const animateOnScroll = () => {
+                const elements = document.querySelectorAll('.fade-in');
+                
+                elements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('visible');
+                    }
+                });
+            };
+            
+            // 监听滚动事件
+            window.addEventListener('scroll', animateOnScroll);
+            // 初始加载时执行一次
+            setTimeout(animateOnScroll, 100);
+            
+            // 主题相关函数
+            function initTheme() {
+                if (isDarkMode) {
+                    document.documentElement.classList.add('dark');
+                    themeToggle.innerHTML = '<i class="fa fa-sun-o text-xl"></i>';
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    themeToggle.innerHTML = '<i class="fa fa-moon-o text-xl"></i>';
+                    localStorage.setItem('theme', 'light');
+                }
+            }
+            }
+            
+            function toggleTheme() {
+
+
+
+
+                const isDark = document.documentElement.classList.toggle('dark');
+                
+                if (isDark) {
+                    themeToggle.innerHTML = '<i class="fa fa-sun-o text-xl"></i>';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    themeToggle.innerHTML = '<i class="fa fa-moon-o text-xl"></i>';
+                    localStorage.setItem('theme', 'light');
+                }
+            }
+                   
